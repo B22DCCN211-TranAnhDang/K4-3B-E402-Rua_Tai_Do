@@ -1,7 +1,7 @@
 # CANVAS CHECKPOINT 1 (CP1) — MINI HACKATHON AI K4
 
 > **Lớp:** 3B · **Phòng:** E402 · **Cụm:** C4 · **Track:** C1 — Knowledge-to-Lesson (Lesson Studio)  
-> **Đội trưởng:** Trần Anh Đăng (Mã HV: 2A202602992)  
+> **Đội trưởng:** Bùi Lê Gia Huy (Mã HV: 2A202602607)  
 > **Nhóm:** Rùa Tai Đỏ  
 > **Thành viên:** Trần Anh Đăng · Nguyễn Khánh Đô · Bùi Lê Gia Huy  
 
