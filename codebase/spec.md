@@ -13,12 +13,12 @@
   *Khi người học làm sai bài kiểm tra sau bài giảng, người học muốn được chỉ rõ chính xác mình đang bị hổng khái niệm nào và nhận tài liệu ôn tập trọng tâm có số trang nguồn xác thực, để lấp lỗ hổng kiến thức ngay lập tức mà không bị ép học tiếp bài mới trong vô định.*
 - **Problem statement (KHÔNG chữ AI):**  
   Tài liệu và slide bài giảng thường lặp ý gây khó hiểu; khi người học làm sai bài kiểm tra thì hệ thống học tập không có nội dung ôn tập riêng mà tự động chuyển sang bài mới, khiến người học phải tự mò mẫm ôn tập, tốn nhiều thời gian và bị hổng kiến thức dây chuyền.
-- **Evidence (Chuẩn A — Khảo sát thực tế 19 người học):**  
-  - Số liệu khảo sát: $n = 19$ (15 sinh viên, 2 học sinh, 2 người đi làm).
-    - **83.3% (15/18)** xác nhận gặp khó khăn khi nhiều slide bị trùng lặp khái niệm.
-    - **68.4% (13/19)** không được hệ thống giao nội dung ôn tập riêng khi làm sai quiz (8 người vẫn phải học tiếp bài mới, 5 người tự mò mẫm ôn).
-    - **52.6% (10/19)** thường xuyên phải học tiếp bài mới dù chưa hiểu rõ bài cũ vì không có lựa chọn.
-    - **68.4% (13/19)** đánh giá tần suất "phải học tiếp dù chưa nắm chắc bài trước" ở mức cao (3/5 đến 5/5).
+- **Evidence (Chuẩn A — Khảo sát thực tế 21 người học):**  
+  - Số liệu khảo sát: $n = 21$ (16 sinh viên, 2 học sinh, 3 người đi làm).
+    - **85.7% (18/21)** xác nhận gặp khó khăn khi nhiều slide bị trùng lặp khái niệm.
+    - **71.4% (15/21)** không được hệ thống giao nội dung ôn tập riêng khi làm sai quiz (8 người vẫn phải học tiếp bài mới, 5 người tự mò mẫm ôn).
+    - **52.4% (11/21)** thường xuyên phải học tiếp bài mới dù chưa hiểu rõ bài cũ vì không có lựa chọn.
+    - **76.2% (16/21)** đánh giá tần suất "phải học tiếp dù chưa nắm chắc bài trước" ở mức cao (3/5 đến 5/5).
   - Trích dẫn bằng chứng nguyên văn:
     1. *"Nhiều lúc làm trắc nghiệm sai xong web cứ trôi qua bài mới, mình chẳng biết lật lại slide nào để đọc lại."* — Học viên Lớp 3B.
     2. *"Các slide định nghĩa Overfitting lặp đi lặp lại ở 3 slide khác nhau nhưng không có sơ đồ tổng quan liên kết."* — Sinh viên ĐH Bách Khoa.
