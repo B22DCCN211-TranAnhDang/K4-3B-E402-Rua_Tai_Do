@@ -6,7 +6,7 @@ Data, Dev — thu thập dữ liệu, thử nghiệm sản phẩm và hỗ trợ
 
 ## Phần tôi thực hiện
 
-* Thu thập và tổng hợp dữ liệu khảo sát để xác định vấn đề của người dùng. (..\eval\survey.xlsx)
+* Thu thập và tổng hợp dữ liệu khảo sát để xác định vấn đề của người dùng.
 * Xây dựng và hoàn thiện giao diện web cho prototype.
 * Chuẩn bị Golden Set 20 test case và hỗ trợ kiểm thử sản phẩm.
 * Ghi nhận kết quả test, các case fail và phản hồi của người dùng để nhóm cải tiến sản phẩm.
