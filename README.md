@@ -9,7 +9,7 @@
 | Họ và Tên | Mã Học Viên | Vai trò chính | Phần việc đảm nhiệm trong dự án |
 |---|---|---|---|
 | Trần Anh Đăng | 2A202602992 | Spec & Prompt | Evidence Test, Prompt engineering trích xuất concept & provenance, chốt AI Spec |
-| Nguyễn Khánh Đô | 2A202602687 | Kỹ sư Prototype (Dev) | Thu thập dữ liệu từ khảo sát, xây dựng giao diện web duyệt quiz (Prototype UI), chuẩn bị Golden set 20 câu kiểm thử |
+| Nguyễn Khánh Đô | 2A202602687 | Data, Dev | Thu thập dữ liệu từ khảo sát, xây dựng giao diện web duyệt quiz (Prototype UI), chuẩn bị Golden set 20 câu kiểm thử |
 | Bùi Lê Gia Huy | 2A202602607 |  Đội trưởng (Lead) · Kiến trúc Dữ liệu & Đánh giá (QA) | Thiết kế Schema dữ liệu (Concept/Quiz JSON), điều phối User test và đo lường độ chính xác CP3 |
 
 
