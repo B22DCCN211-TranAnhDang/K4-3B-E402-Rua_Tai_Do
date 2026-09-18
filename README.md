@@ -13,6 +13,36 @@
 | Bùi Lê Gia Huy | 2A202602607 |  Đội trưởng (Lead) · Kiến trúc Dữ liệu & Đánh giá (QA) | Thiết kế Schema dữ liệu (Concept/Quiz JSON), điều phối User test và đo lường độ chính xác CP3 |
 
 
+## 🌐 Live Web App (GitHub Pages .io)
+
+> 🚀 **Trang Web Trực Tuyến:** [https://b22dccn211-trananhdang.github.io/K4-3B-E402-Rua_Tai_Do/](https://b22dccn211-trananhdang.github.io/K4-3B-E402-Rua_Tai_Do/)  
+> *(Toàn bộ mã nguồn web, CSS, JS đã được đồng bộ chuẩn tĩnh tại Root repo, sẵn sàng chạy ngay trên trình duyệt mà không cần cài đặt).*
+
+### ⚡ Hướng dẫn Bật GitHub Pages trên Repo (2 bước):
+1. Mở repo GitHub: `https://github.com/B22DCCN211-TranAnhDang/K4-3B-E402-Rua_Tai_Do`
+2. Vào **Settings** $\rightarrow$ chọn **Pages** $\rightarrow$ tại **Branch** chọn `main` / `/(root)` $\rightarrow$ Nhấn **Save**.  
+   *Sau ~1-2 phút, trang web `.io` của nhóm sẽ hoạt động trực tiếp!*
+
+---
+
+## 👩‍🏫 Tính Năng Mới: Studio Cho Giảng Viên (Upload Slide & Script Thô)
+
+Hệ thống cung cấp giao diện chuyên dụng cho Giảng viên / Course Builder nạp tài liệu thô và tự động sinh bài giảng thích ứng:
+- **Upload / Kéo thả File Slide** (`.pdf`, `.pptx`, `.md`, `.txt`) hoặc dán trực tiếp dàn ý slide theo từng trang.
+- **Upload / Kéo thả File Script / Transcript Thô** (`.txt`, `.md`, `.vtt`, `.srt`) hoặc dán băng ghi âm lời giảng có mã mốc thời gian `[Txx-NNN]`.
+- **Nút Nạp Mẫu 1-Click**: `⚡ Nạp Mẫu Day 2 Thật (Slide & Transcript)` giúp giám khảo/giảng viên trải nghiệm ngay dữ liệu bài giảng thực tế Day 2.
+- **Pipeline Tự Động Hóa 5 Bước (AI & Heuristic)**:
+  1. *Phân đoạn & Chunking*: Tách slide và trích xuất timeline transcript.
+  2. *Khử trùng lặp (De-duplication)*: Loại bỏ nội dung thừa giữa các slide.
+  3. *Trích xuất Provenance*: Khóa chặt trích dẫn về số trang `Slide X` và mã `[Txx-NNN]`.
+  4. *Xây dựng Knowledge Graph*: Tạo mạng lưới khái niệm và quan hệ tiên quyết.
+  5. *Sinh Bộ Câu Hỏi Chẩn Đoán Ngộ Nhận*: Bóc tách sai lầm tư duy (Solution Jumping, Sunk Cost Fallacy,...) và sinh nhánh bài học thích ứng.
+- **Đồng bộ tức thì sang Chế độ Học viên**: Giảng viên bấm *'🎓 Vào Học Thử Ngay'* để trực tiếp làm bài thi chẩn đoán và kiểm tra luồng AI Remediation.
+- **Xuất Course Package**: Tải file cấu hình JSON của khóa học về máy.
+
+---
+
+
 > Nhóm copy nguyên file README này về repo của mình, rồi điền bảng trên. Cột **Phần việc đảm nhiệm** ghi càng cụ thể càng tốt.
 
 - Thời lượng: **39 giờ** từ phát đề đến thuyết trình (ca 3B) — LAB 5 (phát đề + build) · LEC 6 (tiếp tục build theo ca) · LAB 6 (vòng thi)

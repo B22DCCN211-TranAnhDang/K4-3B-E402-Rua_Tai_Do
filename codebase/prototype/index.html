@@ -46,6 +46,9 @@
 
       <div class="center-controls">
         <div class="mode-tabs" role="tablist">
+          <button id="tabInstructor" class="tab-btn" onclick="switchMode('instructor')">
+            <span class="tab-icon">👩‍🏫</span> Giảng Viên (Upload Slide & Script)
+          </button>
           <button id="tabLearner" class="tab-btn active" onclick="switchMode('learner')">
             <span class="tab-icon">🎓</span> Học Viên (Adaptive Quiz)
           </button>
@@ -70,7 +73,254 @@
 
     <!-- Main Workspace -->
     <main class="main-content">
-      
+
+      <!-- VIEW 0: GIẢNG VIÊN INGESTION STUDIO (UPLOAD SLIDE & SCRIPT THÔ) -->
+      <section id="viewInstructor" class="view-panel">
+        <div class="instructor-container">
+          <!-- Top Header Bar -->
+          <div class="instructor-header-bar">
+            <div>
+              <div class="header-tag-pill">👩‍🏫 DÀNH CHO GIẢNG VIÊN & COURSE BUILDER</div>
+              <h2>Nạp Slide & Script Thô ➔ Tự Động Sinh Khóa Học Thích Ứng</h2>
+              <p>Hệ thống tự động phân đoạn, khử trùng lặp (de-duplication), xây dựng Knowledge Graph và sinh bộ câu hỏi chẩn đoán ngộ nhận kèm căn cứ nguồn gốc (Provenance).</p>
+            </div>
+            <div class="instructor-header-actions">
+              <button class="btn-sample" onclick="loadDay2SampleData()">
+                <span>⚡ Nạp Mẫu Day 2 Thật (Slide & Transcript)</span>
+              </button>
+              <button class="btn-ghost" onclick="clearInstructorInputs()">
+                <span>🧹 Xóa Trắng</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dual Input Grid: Slide & Transcript -->
+          <div class="ingestion-grid">
+            
+            <!-- Left: Slide Ingestion Card -->
+            <div class="ingest-card">
+              <div class="ingest-card-header">
+                <div class="ingest-title">
+                  <span class="ingest-icon">📑</span>
+                  <div>
+                    <h3>1. Slide Bài Giảng (Slides / Outline)</h3>
+                    <span class="ingest-sub">Kéo thả file .pdf, .pptx, .md, .txt hoặc dán nội dung slide</span>
+                  </div>
+                </div>
+                <label class="btn-upload-file" for="fileSlideInput">
+                  <span>📁 Chọn File Slide</span>
+                  <input type="file" id="fileSlideInput" accept=".txt,.md,.pdf,.pptx" style="display: none;" onchange="handleSlideFileUpload(event)">
+                </label>
+              </div>
+
+              <!-- Drag & Drop Zone -->
+              <div class="drop-zone" id="slideDropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleSlideDrop(event)">
+                <div class="drop-zone-prompt" id="slideDropPrompt">
+                  <span class="drop-icon">📤</span>
+                  <span>Kéo thả file Slide vào đây hoặc chỉnh sửa văn bản bên dưới</span>
+                </div>
+                <div class="file-loaded-badge" id="slideFileBadge" style="display: none;">
+                  <span class="badge-icon">✓</span>
+                  <span id="slideFileName">d2-slide-hackathon.pdf</span>
+                  <button class="btn-badge-remove" onclick="removeSlideFile()">✕</button>
+                </div>
+              </div>
+
+              <div class="editor-wrap">
+                <div class="editor-toolbar">
+                  <span>Văn bản Slide theo từng trang:</span>
+                  <span class="editor-stats" id="slideWordCount">0 từ · 0 slide</span>
+                </div>
+                <textarea id="slideTextInput" class="ingest-textarea" oninput="updateWordCounts()" placeholder="Nhập hoặc dán nội dung slide tại đây...
+Ví dụ:
+Slide 8: Problem Framing vs Solution Jumping - Nhận diện điểm đau thực sự thay vì nhảy vào làm chatbot
+Slide 14: Dogfooding Strategy - Đội ngũ phát triển tự dùng sản phẩm hàng ngày
+Slide 17: Double Diamond & Sunk Cost - Bẫy chi phí chìm, làm đúng cái sai
+Slide 20: First Principles Thinking - Tư duy từ nguyên lý nguyên bản (SpaceX)
+Slide 24: Impact-Effort Matrix - Ưu tiên nhóm Quick Wins (High Impact, Low Effort)..."></textarea>
+              </div>
+            </div>
+
+            <!-- Right: Script / Transcript Ingestion Card -->
+            <div class="ingest-card">
+              <div class="ingest-card-header">
+                <div class="ingest-title">
+                  <span class="ingest-icon">🎙️</span>
+                  <div>
+                    <h3>2. Script / Transcript Thô (Audio Speech)</h3>
+                    <span class="ingest-sub">Kéo thả file .txt, .md, .vtt, .srt hoặc dán băng ghi âm lời giảng</span>
+                  </div>
+                </div>
+                <label class="btn-upload-file" for="fileTranscriptInput">
+                  <span>📁 Chọn File Transcript</span>
+                  <input type="file" id="fileTranscriptInput" accept=".txt,.md,.vtt,.srt" style="display: none;" onchange="handleTranscriptFileUpload(event)">
+                </label>
+              </div>
+
+              <!-- Drag & Drop Zone -->
+              <div class="drop-zone" id="transcriptDropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleTranscriptDrop(event)">
+                <div class="drop-zone-prompt" id="transcriptDropPrompt">
+                  <span class="drop-icon">📤</span>
+                  <span>Kéo thả file Transcript vào đây hoặc chỉnh sửa văn bản bên dưới</span>
+                </div>
+                <div class="file-loaded-badge" id="transcriptFileBadge" style="display: none;">
+                  <span class="badge-icon">✓</span>
+                  <span id="transcriptFileName">transcript-01-clean.md</span>
+                  <button class="btn-badge-remove" onclick="removeTranscriptFile()">✕</button>
+                </div>
+              </div>
+
+              <div class="editor-wrap">
+                <div class="editor-toolbar">
+                  <span>Bản ghi âm lời giảng kèm mã mốc thời gian [Txx-NNN]:</span>
+                  <span class="editor-stats" id="transcriptWordCount">0 từ · 0 đoạn</span>
+                </div>
+                <textarea id="transcriptTextInput" class="ingest-textarea" oninput="updateWordCounts()" placeholder="Nhập hoặc dán transcript lời giảng thô tại đây...
+Ví dụ:
+[T01-004] Góc nhìn của mình từ trước đến giờ với công nghệ rất đơn giản: công nghệ sinh ra để giải quyết vấn đề. Con người có quán tính nhảy thẳng vào giải pháp...
+[T01-042] Chiến lược Dogfooding: đội ngũ phát triển phải tự dùng chính sản phẩm của mình hàng ngày để cảm nhận nỗi đau và tối ưu liên tục...
+[T01-049] Trong mô hình Double Diamond, làm đúng cái sai nguy hiểm hơn làm sai cái đúng vì rơi vào bẫy chi phí chìm...
+[T01-062] First Principles Thinking: bóc tách bài toán về những chân lý cốt lõi nhất không thể chia nhỏ hơn...
+[T01-078] Ma trận Tác động - Nỗ lực: nhóm High Impact - Low Effort mang lại Quick Wins sớm nhất..."></textarea>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Extraction Controls & Action Bar -->
+          <div class="pipeline-action-card">
+            <div class="pipeline-options">
+              <label class="checkbox-label">
+                <input type="checkbox" id="chkDedup" checked>
+                <span>Tự động khử trùng lặp (De-duplication) giữa Slide & Lời giảng</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="chkSanitizePii" checked>
+                <span>Kích hoạt Security Shield lọc PII (SĐT, Email, MSSV) trước khi phân tích</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="chkProvenance" checked>
+                <span>Bắt buộc khóa căn cứ nguồn gốc (Provenance) Slide + Transcript</span>
+              </label>
+            </div>
+            
+            <button class="btn-run-pipeline" id="btnRunPipeline" onclick="runIngestionPipeline()">
+              <span class="pipeline-btn-icon">🚀</span>
+              <span class="pipeline-btn-text">TRÍCH XUẤT TRI THỨC & TẠO KHÓA HỌC THÍCH ỨNG</span>
+            </button>
+          </div>
+
+          <!-- Animated Pipeline Progress Box (Appears during generation) -->
+          <div class="pipeline-progress-card" id="pipelineProgressCard" style="display: none;">
+            <div class="pipeline-progress-header">
+              <div class="spinner"></div>
+              <div>
+                <h3 id="pipelineStatusTitle">AI Đang Phân Tích & Sinh Khóa Học Thích Ứng...</h3>
+                <p id="pipelineStatusDesc">Đang phân mảnh tài liệu và khử trùng lặp dữ liệu Slide/Script</p>
+              </div>
+            </div>
+
+            <div class="pipeline-steps-tracker">
+              <div class="p-step" id="pStep1">
+                <div class="p-step-circle">1</div>
+                <div class="p-step-info">
+                  <strong>Phân đoạn & Chunking</strong>
+                  <span>Tách slide & timeline</span>
+                </div>
+              </div>
+              <div class="p-step-connector"></div>
+              <div class="p-step" id="pStep2">
+                <div class="p-step-circle">2</div>
+                <div class="p-step-info">
+                  <strong>Khử trùng lặp</strong>
+                  <span>Lọc nhiễu & gộp ý</span>
+                </div>
+              </div>
+              <div class="p-step-connector"></div>
+              <div class="p-step" id="pStep3">
+                <div class="p-step-circle">3</div>
+                <div class="p-step-info">
+                  <strong>Trích xuất Provenance</strong>
+                  <span>Khóa Slide & Transcript</span>
+                </div>
+              </div>
+              <div class="p-step-connector"></div>
+              <div class="p-step" id="pStep4">
+                <div class="p-step-circle">4</div>
+                <div class="p-step-info">
+                  <strong>Xây dựng Graph</strong>
+                  <span>Nodes & Quan hệ tiên quyết</span>
+                </div>
+              </div>
+              <div class="p-step-connector"></div>
+              <div class="p-step" id="pStep5">
+                <div class="p-step-circle">5</div>
+                <div class="p-step-info">
+                  <strong>Sinh Quiz & Remediation</strong>
+                  <span>Bóc tách bẫy ngộ nhận</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Generation Results Dashboard (Appears upon completion) -->
+          <div class="generation-results-card" id="generationResultsCard" style="display: none;">
+            <div class="results-banner">
+              <div class="results-banner-left">
+                <div class="results-success-icon">🎉</div>
+                <div>
+                  <h3 id="resCourseTitle">Đã Trích Xuất & Tạo Khóa Học Thích Ứng Thành Công!</h3>
+                  <p id="resCourseSummary">Phát hiện 5 Concept then chốt, khử trùng lặp 24% nội dung râu ria, 100% trích dẫn đúng nguồn gốc.</p>
+                </div>
+              </div>
+              <div class="results-banner-actions">
+                <button class="btn-primary-glow" onclick="switchToLearnerWithGeneratedCourse()">
+                  <span>🎓 Vào Học Thử Ngay (Chế độ Học Viên) →</span>
+                </button>
+                <button class="btn-secondary" onclick="switchMode('studio')">
+                  <span>🔬 Xem Knowledge Graph</span>
+                </button>
+                <button class="btn-ghost" onclick="exportCourseJson()">
+                  <span>💾 Tải Course Package (JSON)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Extracted Concepts & Provenance Table -->
+            <div class="extracted-details-grid">
+              <div class="extracted-concepts-box">
+                <h4>📚 Danh Sách Concept & Căn Cứ Nguồn Gốc (Provenance)</h4>
+                <div class="concepts-table-wrap">
+                  <table class="concepts-table">
+                    <thead>
+                      <tr>
+                        <th>Concept Name</th>
+                        <th>Căn Cứ Slide</th>
+                        <th>Mã Transcript</th>
+                        <th>Khử Trùng Lặp</th>
+                        <th>Mô Tả Trọng Tâm</th>
+                      </tr>
+                    </thead>
+                    <tbody id="extractedConceptsBody">
+                      <!-- Injected via JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Generated Quiz Preview Box -->
+              <div class="generated-quiz-box">
+                <h4>🎯 Xem Trước Bộ Câu Hỏi Chẩn Đoán Ngộ Nhận Vừa Sinh</h4>
+                <div class="quiz-preview-list" id="generatedQuizList">
+                  <!-- Injected via JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       <!-- VIEW 1: LEARNER ADAPTIVE QUIZ -->
       <section id="viewLearner" class="view-panel active">
         <div class="workspace-grid">

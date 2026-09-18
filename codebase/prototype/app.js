@@ -7,7 +7,7 @@
 // 1. DATA FIXTURES (Track C1 Domain - Day 2 Bài toán & Product Thinking)
 // ==========================================
 
-const QUESTIONS_DATA = [
+let QUESTIONS_DATA = [
   {
     id: 1,
     concept: "Problem Framing vs Solution Jumping",
@@ -80,7 +80,7 @@ const QUESTIONS_DATA = [
   }
 ];
 
-const GRAPH_NODES = [
+let GRAPH_NODES = [
   { id: "problem_framing", label: "Problem Framing", x: 120, y: 150, slide: "Slide 8", dedup: "Gộp Slide 7 & 8 (Pain point vs Solution jumping)", desc: "Xác định đúng điểm đau thay vì nhảy vội vào giải pháp chatbot.", quiz: "Câu 1: Sai lầm khi nhận yêu cầu mơ hồ" },
   { id: "dogfooding", label: "Dogfooding Strategy", x: 280, y: 80, slide: "Slide 14", dedup: "Gộp Slide 13 & 14 (User-as-maker)", desc: "Tự mình dùng sản phẩm của mình để thấu hiểu nỗi đau (Jira, Slack, Claude Code).", quiz: "Câu 2: Bản chất chiến lược Dogfooding" },
   { id: "double_diamond", label: "Double Diamond", x: 440, y: 220, slide: "Slide 17", dedup: "Gộp Slide 16 & 17 (Phân kỳ - Hội tụ)", desc: "Khám phá vấn đề đúng trước khi tìm giải pháp đúng; tránh bẫy chi phí chìm.", quiz: "Câu 3: Làm đúng cái sai vs Làm sai cái đúng" },
@@ -88,7 +88,7 @@ const GRAPH_NODES = [
   { id: "impact_effort", label: "Impact-Effort Matrix", x: 740, y: 260, slide: "Slide 24", dedup: "Slide 23-24", desc: "Đánh giá 2 trục Tác động và Nỗ lực để chọn bài toán Quick Wins.", quiz: "Câu 5: Ưu tiên nhóm Quick Wins" }
 ];
 
-const GRAPH_EDGES = [
+let GRAPH_EDGES = [
   { from: "problem_framing", to: "dogfooding", label: "validates_by" },
   { from: "problem_framing", to: "double_diamond", label: "framed_in" },
   { from: "double_diamond", to: "first_principles", label: "deconstructs" },
@@ -168,30 +168,37 @@ function updateSecurityUiStatus() {
   }
 }
 
-// Switch Views (Learner, Studio Graph, Eval Benchmark)
+// Switch Views (Instructor Ingestion, Learner Quiz, Studio Graph, Eval Benchmark)
 function switchMode(mode) {
+  const tabInstructor = document.getElementById("tabInstructor");
   const tabLearner = document.getElementById("tabLearner");
   const tabStudio = document.getElementById("tabStudio");
   const tabEval = document.getElementById("tabEval");
+  const viewInstructor = document.getElementById("viewInstructor");
   const viewLearner = document.getElementById("viewLearner");
   const viewStudio = document.getElementById("viewStudio");
   const viewEval = document.getElementById("viewEval");
 
-  [tabLearner, tabStudio, tabEval].forEach(t => t.classList.remove("active"));
-  [viewLearner, viewStudio, viewEval].forEach(v => v.classList.remove("active"));
+  [tabInstructor, tabLearner, tabStudio, tabEval].forEach(t => t && t.classList.remove("active"));
+  [viewInstructor, viewLearner, viewStudio, viewEval].forEach(v => v && v.classList.remove("active"));
 
-  if (mode === "learner") {
-    tabLearner.classList.add("active");
-    viewLearner.classList.add("active");
+  if (mode === "instructor") {
+    if (tabInstructor) tabInstructor.classList.add("active");
+    if (viewInstructor) viewInstructor.classList.add("active");
+    logAudit("Chuyển chế độ", "Chế độ Giảng viên (Upload Slide & Script thô ➔ Sinh Khóa học)");
+    updateWordCounts();
+  } else if (mode === "learner") {
+    if (tabLearner) tabLearner.classList.add("active");
+    if (viewLearner) viewLearner.classList.add("active");
     logAudit("Chuyển chế độ", "Chế độ Học viên (Adaptive Quiz & AI Remediation)");
   } else if (mode === "studio") {
-    tabStudio.classList.add("active");
-    viewStudio.classList.add("active");
+    if (tabStudio) tabStudio.classList.add("active");
+    if (viewStudio) viewStudio.classList.add("active");
     logAudit("Chuyển chế độ", "Chế độ Studio / Giảng viên (Knowledge Graph Inspector)");
     renderGraph();
   } else if (mode === "eval") {
-    tabEval.classList.add("active");
-    viewEval.classList.add("active");
+    if (tabEval) tabEval.classList.add("active");
+    if (viewEval) viewEval.classList.add("active");
     logAudit("Chuyển chế độ", "Chế độ Đánh giá Golden Set 20 Cases (Eval Run 1: 85.0%)");
   }
 }
@@ -715,3 +722,328 @@ function clearApiKeyStorage() {
   logAudit("Bảo mật", "Đã xóa API Key khỏi bộ nhớ sessionStorage.", "audit-alert");
   alert("Đã xóa API Key khỏi trình duyệt.");
 }
+
+// ==========================================
+// 10. CHẾ ĐỘ GIẢNG VIÊN (STUDIO INGESTION & PIPELINE)
+// ==========================================
+
+const DAY2_SAMPLE_SLIDE = `# SLIDE BÀI GIẢNG DAY 2: XÁC ĐỊNH BÀI TOÁN AI CHO DOANH NGHIỆP & PRODUCT MINDSET
+Slide 1: Hackathon AI K4 - Lộ trình phát triển sản phẩm AI từ bài toán kinh doanh thực tế.
+Slide 4: Thách thức triển khai AI: 70% thành công đến từ con người & quy trình vận hành, chỉ 30% từ công nghệ.
+Slide 7: Khám phá điểm đau (Pain Point Discovery): Nhu cầu thực tế của user vs công nghệ hào nhoáng.
+Slide 8: Problem Framing vs Solution Jumping: Đừng vội vã làm AI Chatbot khi chưa bóc tách đúng điểm đau. Cần kỹ thuật Five Whys đào sâu nguyên nhân gốc.
+Slide 11: Văn hóa Product vs Project: User-centered mindset và phòng ngừa nợ kỹ thuật (technical debt).
+Slide 13: Thiết kế trải nghiệm người dùng với AI: Khác biệt căn bản giữa phần mềm xác định và hệ thống xác suất.
+Slide 14: Dogfooding Strategy: Đội ngũ phát triển tự sử dụng chính sản phẩm của mình mỗi ngày để cảm nhận trọn vẹn điểm đau và tối ưu liên tục (như Jira, Slack, Claude Code).
+Slide 16: Tư duy hệ thống: Thinking Fast and Slow (Hệ thống 1 phản xạ nhanh vs Hệ thống 2 tư duy chậm).
+Slide 17: Mô hình Kim cương đôi (Double Diamond): Khám phá vấn đề đúng trước khi tìm giải pháp đúng. Bẫy chi phí chìm (Sunk Cost Fallacy): 'Làm đúng cái sai' nguy hiểm hơn 'Làm sai cái đúng'.
+Slide 20: First Principles Thinking: Tư duy từ nguyên lý nguyên bản, bóc tách cấu phần về những chân lý cốt lõi tối thiểu không thể chia nhỏ hơn (Elon Musk & SpaceX).
+Slide 23: Bộ lọc phân loại bài toán AI khả thi.
+Slide 24: Ma trận Tác động - Nỗ lực (Impact-Effort Matrix): Ưu tiên tuyệt đối nhóm Quick Wins (High Impact - Low Effort) để tạo thành quả sớm.
+Slide 25: Problem Statement Canvas chuẩn hóa cho bài toán AI.`;
+
+const DAY2_SAMPLE_TRANSCRIPT = `# TRANSCRIPT BÀI GIẢNG DAY 2 (BẢN SẠCH T01)
+[T01-001] Kỹ năng quan trọng nhất và đang thiếu nhất là khả năng xác định ra một bài toán từ một yêu cầu rất mơ hồ, sau đấy bóc tách nó ra cho team development phát triển.
+[T01-002] Doanh nghiệp tuyển rất nhiều AI engineer nhưng họ chỉ giải được bài toán đã có sẵn đề bài. Vấn đề là không có ai chỉ ra được trong 7749 việc, cái gì nên làm trước để ra thành quả ngay.
+[T01-003] Thống kê thế giới cho thấy đưa AI vào doanh nghiệp thì 70% đến từ con người và vận hành chứ không phải công nghệ.
+[T01-004] Công nghệ sinh ra để giải quyết một vấn đề gì đấy. Con người có quán tính nhảy thẳng vào giải pháp (Solution Jumping). Lãnh đạo cứ đòi làm AI support nhưng support cho ai, giải quyết cái gì thì chưa trả lời được.
+[T01-011] Người làm product thì luôn user-centered: mình build cái này cho ai, ai dùng và họ có thực sự cần nó hay không.
+[T01-042] Chiến lược Dogfooding: đội ngũ phát triển tự dùng chính sản phẩm của mình hàng ngày để cảm nhận nỗi đau, là tester đầu tiên và tối ưu liên tục mà không cần chờ người ngoài phản hồi (giống Jira, Slack, Anthropic build Claude Code).
+[T01-049] Trong Double Diamond, làm đúng cái sai nguy hiểm hơn rất nhiều so với làm sai cái đúng vì rơi vào bẫy chi phí chìm (Sunk Cost Fallacy) và ảo tưởng thành công, rất khó quay lại đặt lại vấn đề ban đầu.
+[T01-062] First Principles Thinking: bóc tách bài toán về những chân lý nền tảng cốt lõi nhất không thể chia nhỏ hơn để sáng tạo giải pháp mới, như Elon Musk phân tích chi phí tên lửa SpaceX.
+[T01-078] Ma trận Tác động - Nỗ lực: nhóm High Impact - Low Effort mang lại Quick Wins sớm nhất, chứng minh giá trị kinh doanh với chi phí tối thiểu trước khi xin thêm ngân sách lớn.`;
+
+function loadDay2SampleData() {
+  const slideArea = document.getElementById("slideTextInput");
+  const transcriptArea = document.getElementById("transcriptTextInput");
+  
+  if (slideArea) slideArea.value = DAY2_SAMPLE_SLIDE;
+  if (transcriptArea) transcriptArea.value = DAY2_SAMPLE_TRANSCRIPT;
+
+  const slideBadge = document.getElementById("slideFileBadge");
+  const slideName = document.getElementById("slideFileName");
+  const slidePrompt = document.getElementById("slideDropPrompt");
+  if (slideBadge) slideBadge.style.display = "inline-flex";
+  if (slideName) slideName.textContent = "d2-slide-hackathon.pdf (Day 2 Slide Thật)";
+  if (slidePrompt) slidePrompt.style.display = "none";
+
+  const trBadge = document.getElementById("transcriptFileBadge");
+  const trName = document.getElementById("transcriptFileName");
+  const trPrompt = document.getElementById("transcriptDropPrompt");
+  if (trBadge) trBadge.style.display = "inline-flex";
+  if (trName) trName.textContent = "transcript-01-clean.md (Day 2 Clean Transcript)";
+  if (trPrompt) trPrompt.style.display = "none";
+
+  updateWordCounts();
+  logAudit("Nạp Dữ Liệu Mẫu", "Đã nạp bộ Slide & Transcript sạch Day 2 (Xác định bài toán AI & Product Mindset).", "audit-success");
+}
+
+function clearInstructorInputs() {
+  const slideArea = document.getElementById("slideTextInput");
+  const transcriptArea = document.getElementById("transcriptTextInput");
+  if (slideArea) slideArea.value = "";
+  if (transcriptArea) transcriptArea.value = "";
+
+  removeSlideFile();
+  removeTranscriptFile();
+  updateWordCounts();
+
+  document.getElementById("pipelineProgressCard").style.display = "none";
+  document.getElementById("generationResultsCard").style.display = "none";
+  logAudit("Xóa Dữ Liệu", "Đã xóa trắng tài liệu nạp của giảng viên.");
+}
+
+function updateWordCounts() {
+  const slideText = document.getElementById("slideTextInput")?.value || "";
+  const transcriptText = document.getElementById("transcriptTextInput")?.value || "";
+
+  const slideWords = slideText.trim() ? slideText.trim().split(/\s+/).length : 0;
+  const slideCount = (slideText.match(/Slide\s*\d+|#+/gi) || []).length;
+  const elSlide = document.getElementById("slideWordCount");
+  if (elSlide) elSlide.textContent = `${slideWords} từ · ${slideCount > 0 ? slideCount : (slideText.length > 0 ? 1 : 0)} slide`;
+
+  const trWords = transcriptText.trim() ? transcriptText.trim().split(/\s+/).length : 0;
+  const trSegments = (transcriptText.match(/\[T\d+-\d+\]/gi) || []).length;
+  const elTr = document.getElementById("transcriptWordCount");
+  if (elTr) elTr.textContent = `${trWords} từ · ${trSegments > 0 ? trSegments : (transcriptText.length > 0 ? 1 : 0)} đoạn`;
+}
+
+// File Upload and Drag & Drop
+function handleSlideFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  readFileIntoTextarea(file, "slideTextInput", "slideFileBadge", "slideFileName", "slideDropPrompt");
+}
+
+function handleTranscriptFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  readFileIntoTextarea(file, "transcriptTextInput", "transcriptFileBadge", "transcriptFileName", "transcriptDropPrompt");
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.add("dragover");
+}
+
+function handleDragLeave(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove("dragover");
+}
+
+function handleSlideDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove("dragover");
+  const files = e.dataTransfer.files;
+  if (files && files.length > 0) {
+    readFileIntoTextarea(files[0], "slideTextInput", "slideFileBadge", "slideFileName", "slideDropPrompt");
+  }
+}
+
+function handleTranscriptDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove("dragover");
+  const files = e.dataTransfer.files;
+  if (files && files.length > 0) {
+    readFileIntoTextarea(files[0], "transcriptTextInput", "transcriptFileBadge", "transcriptFileName", "transcriptDropPrompt");
+  }
+}
+
+function readFileIntoTextarea(file, textareaId, badgeId, fileNameId, promptId) {
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    document.getElementById(textareaId).value = evt.target.result;
+    document.getElementById(badgeId).style.display = "inline-flex";
+    document.getElementById(fileNameId).textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+    document.getElementById(promptId).style.display = "none";
+    updateWordCounts();
+    logAudit("Nạp file", `Đã tải ${file.name} (${Math.round(file.size / 1024)} KB).`, "audit-success");
+  };
+  reader.readAsText(file);
+}
+
+function removeSlideFile() {
+  const badge = document.getElementById("slideFileBadge");
+  const prompt = document.getElementById("slideDropPrompt");
+  const input = document.getElementById("fileSlideInput");
+  if (badge) badge.style.display = "none";
+  if (prompt) prompt.style.display = "flex";
+  if (input) input.value = "";
+}
+
+function removeTranscriptFile() {
+  const badge = document.getElementById("transcriptFileBadge");
+  const prompt = document.getElementById("transcriptDropPrompt");
+  const input = document.getElementById("fileTranscriptInput");
+  if (badge) badge.style.display = "none";
+  if (prompt) prompt.style.display = "flex";
+  if (input) input.value = "";
+}
+
+function setStepState(stepNum, state) {
+  const el = document.getElementById(`pStep${stepNum}`);
+  if (!el) return;
+  el.classList.remove("active", "done");
+  if (state === "active") el.classList.add("active");
+  if (state === "done") el.classList.add("done");
+}
+
+// Pipeline Runner
+async function runIngestionPipeline() {
+  const slideText = document.getElementById("slideTextInput").value.trim();
+  const transcriptText = document.getElementById("transcriptTextInput").value.trim();
+
+  if (!slideText || !transcriptText) {
+    alert("Vui lòng nhập hoặc nạp đủ cả Slide bài giảng và Script/Transcript lời giảng!");
+    return;
+  }
+
+  const progressCard = document.getElementById("pipelineProgressCard");
+  const resultsCard = document.getElementById("generationResultsCard");
+  const btnRun = document.getElementById("btnRunPipeline");
+
+  progressCard.style.display = "flex";
+  resultsCard.style.display = "none";
+  btnRun.disabled = true;
+
+  // Reset steps
+  for (let i = 1; i <= 5; i++) {
+    setStepState(i, "");
+  }
+
+  // Step 1: Chunking
+  setStepState(1, "active");
+  document.getElementById("pipelineStatusTitle").textContent = "Bước 1/5: Phân đoạn & Chunking tài liệu...";
+  document.getElementById("pipelineStatusDesc").textContent = "Đang tách các trang slide và phân tích timeline của transcript...";
+  await new Promise(r => setTimeout(r, 400));
+  setStepState(1, "done");
+
+  // Step 2: Deduplication
+  setStepState(2, "active");
+  document.getElementById("pipelineStatusTitle").textContent = "Bước 2/5: Khử trùng lặp (De-duplication)...";
+  document.getElementById("pipelineStatusDesc").textContent = "Phát hiện nội dung lặp lại giữa các slide để tối ưu hóa thời gian học...";
+  await new Promise(r => setTimeout(r, 450));
+  setStepState(2, "done");
+
+  // Step 3: Provenance Mapping
+  setStepState(3, "active");
+  document.getElementById("pipelineStatusTitle").textContent = "Bước 3/5: Trích xuất Concept & Căn cứ nguồn gốc (Provenance)...";
+  document.getElementById("pipelineStatusDesc").textContent = "Gán chính xác số trang Slide và mã đoạn Transcript cho từng đơn vị tri thức...";
+  await new Promise(r => setTimeout(r, 450));
+  setStepState(3, "done");
+
+  // Step 4: Knowledge Graph
+  setStepState(4, "active");
+  document.getElementById("pipelineStatusTitle").textContent = "Bước 4/5: Xây dựng Knowledge Graph & Quan hệ tiên quyết...";
+  document.getElementById("pipelineStatusDesc").textContent = "Tạo các Node khái niệm và Edges điều kiện tiên quyết phục vụ học thích ứng...";
+  await new Promise(r => setTimeout(r, 400));
+  setStepState(4, "done");
+
+  // Step 5: Sinh Quiz & Remediation
+  setStepState(5, "active");
+  document.getElementById("pipelineStatusTitle").textContent = "Bước 5/5: Sinh Bộ câu hỏi chẩn đoán ngộ nhận & Bài học thích ứng...";
+  document.getElementById("pipelineStatusDesc").textContent = "Tổng hợp các phương án gây nhiễu (distractors) phát hiện lỗ hổng tư duy...";
+
+  try {
+    const extracted = await AIEngine.extractCourseFromSlideAndTranscript(slideText, transcriptText);
+    setStepState(5, "done");
+
+    if (extracted && extracted.questions && extracted.questions.length > 0) {
+      QUESTIONS_DATA = extracted.questions;
+      GRAPH_NODES = extracted.nodes;
+      GRAPH_EDGES = extracted.edges;
+      if (extracted.traces) {
+        Object.assign(AIEngine.FALLBACK_TRACES, extracted.traces);
+      }
+
+      conceptMastery = {};
+      GRAPH_NODES.forEach(n => {
+        conceptMastery[n.id] = 0;
+      });
+
+      renderMasteryList();
+      renderGraph();
+
+      // Render Ingestion Results
+      document.getElementById("resCourseTitle").textContent = extracted.courseTitle || "Khóa Học Thích Ứng Đã Sẵn Sàng!";
+      document.getElementById("resCourseSummary").textContent = extracted.dedupSummary || `Đã trích xuất ${extracted.concepts.length} Concept, khử trùng lặp ${extracted.dedupRatio}% nội dung râu ria, 100% trích dẫn đúng nguồn gốc.`;
+
+      const tableBody = document.getElementById("extractedConceptsBody");
+      tableBody.innerHTML = extracted.concepts.map(c => `
+        <tr>
+          <td><strong>${c.name}</strong></td>
+          <td><span class="badge-provenance">${c.slideProvenance}</span></td>
+          <td><code>${c.transcriptProvenance}</code></td>
+          <td><span class="dedup-badge">${c.dedupNote}</span></td>
+          <td style="color: var(--text-secondary); font-size: 11.5px;">${c.summary}</td>
+        </tr>
+      `).join("");
+
+      const quizList = document.getElementById("generatedQuizList");
+      quizList.innerHTML = extracted.questions.map((q, i) => `
+        <div class="quiz-preview-item">
+          <div class="qp-header">
+            <span class="qp-num">Câu ${i + 1} · ${q.concept}</span>
+            <span class="qp-provenance">${q.provenance}</span>
+          </div>
+          <div class="qp-text">${q.text}</div>
+          <div class="qp-options">
+            ${q.options.map(opt => `
+              <div class="qp-opt ${opt.isCorrect ? 'correct' : ''}">
+                ${opt.isCorrect ? '✓ ' : '• '}${opt.text}
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `).join("");
+
+      window.LATEST_GENERATED_COURSE = extracted;
+
+      progressCard.style.display = "none";
+      resultsCard.style.display = "flex";
+      btnRun.disabled = false;
+
+      logAudit("Sinh Khóa Học Hoàn Tất", `Đã tạo ${extracted.concepts.length} Concepts & ${extracted.questions.length} câu hỏi chẩn đoán ngộ nhận.`, "audit-success");
+    }
+  } catch (err) {
+    console.error("Pipeline error:", err);
+    alert("Đã xảy ra lỗi khi sinh khóa học: " + err.message);
+    progressCard.style.display = "none";
+    btnRun.disabled = false;
+  }
+}
+
+function switchToLearnerWithGeneratedCourse() {
+  currentQuestionIndex = 0;
+  scoreCount = 0;
+  remediationCount = 0;
+  renderQuestion(0);
+  switchMode("learner");
+  logAudit("Trải nghiệm khóa học", "Giảng viên chuyển sang Chế độ Học viên để làm bài đánh giá vừa sinh.", "audit-success");
+}
+
+function exportCourseJson() {
+  const courseData = window.LATEST_GENERATED_COURSE || {
+    title: "Xác Định Bài Toán AI Cho Doanh Nghiệp & Product Mindset (Day 2)",
+    concepts: GRAPH_NODES,
+    edges: GRAPH_EDGES,
+    questions: QUESTIONS_DATA,
+    traces: AIEngine.FALLBACK_TRACES
+  };
+
+  const blob = new Blob([JSON.stringify(courseData, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `adaptive_course_package_${Date.now()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  logAudit("Xuất Dữ Liệu", "Đã tải file cấu hình Course Package (.json) về máy.", "audit-success");
+}
+
