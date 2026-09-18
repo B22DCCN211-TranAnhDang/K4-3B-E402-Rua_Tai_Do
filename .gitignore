@@ -1,0 +1,21 @@
+# Security & Environment Secrets
+.env
+*.env
+.env.local
+.env.*.local
+api_keys.json
+credentials.json
+*.pem
+*.key
+
+# Data Packs (Do not commit full raw datasets to git as per README policy)
+data/vlearn-pack/raw/
+*.xlsx
+*.pdf
+
+# System & OS Files
+.DS_Store
+Thumbs.db
+node_modules/
+.idea/
+.vscode/

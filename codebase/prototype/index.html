@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rùa Tai Đỏ · Adaptive Knowledge-to-Lesson Prototype (CP3)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Floating Video Recording Guidance Banner -->
+    <div id="videoBanner" class="video-guidance-banner" style="display: none;">
+      <div class="video-banner-content">
+        <div class="rec-indicator">
+          <span class="rec-dot"></span>
+          <strong>ĐANG CHẠY KỊCH BẢN QUAY VIDEO 30S</strong>
+        </div>
+        <div class="video-timeline-step" id="videoStepText">
+          00:00 - 00:05: Làm đúng Câu 1 để tăng điểm Mastery
+        </div>
+        <div class="video-timer-badge">
+          Thời gian: <span id="videoTimerNum">30s</span>
+        </div>
+        <button class="btn-banner-close" onclick="stopVideoDemo()">✕ Dừng</button>
+      </div>
+      <div class="video-progress-line">
+        <div id="videoProgressFill" class="video-progress-fill" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <!-- Top Header Navigation -->
+    <header class="navbar">
+      <div class="brand-group">
+        <div class="logo-badge">
+          <span class="logo-icon">🐢</span>
+          <div class="brand-text">
+            <span class="brand-name">RÙA TAI ĐỎ <span class="tag-c1">TRACK C1 · CP3</span></span>
+            <span class="brand-sub">Adaptive Lesson Studio · Lời Gọi AI Thật & Bảo Mật Dữ Liệu</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="center-controls">
+        <div class="mode-tabs" role="tablist">
+          <button id="tabLearner" class="tab-btn active" onclick="switchMode('learner')">
+            <span class="tab-icon">🎓</span> Học Viên (Adaptive Quiz)
+          </button>
+          <button id="tabStudio" class="tab-btn" onclick="switchMode('studio')">
+            <span class="tab-icon">🔬</span> Studio Graph (Khử Trùng Lặp)
+          </button>
+          <button id="tabEval" class="tab-btn" onclick="switchMode('eval')">
+            <span class="tab-icon">📊</span> Golden Set 20 (Eval Run 1)
+          </button>
+        </div>
+      </div>
+
+      <div class="header-meta">
+        <button class="btn-security" onclick="openSecurityModal()" title="Cấu hình Gemini API Key và kiểm tra an toàn PII">
+          <span class="key-icon">🔑</span> <span id="btnKeyLabel">Cấu hình AI & Bảo mật</span>
+        </button>
+        <button class="btn-scenario" onclick="start30SecVideoDemo()" title="Tự động chạy chuỗi thao tác chuẩn 30 giây để bạn ghi hình màn hình cho TA">
+          <span class="play-icon">🎬</span> Quay Video CP3 (30s)
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      
+      <!-- VIEW 1: LEARNER ADAPTIVE QUIZ -->
+      <section id="viewLearner" class="view-panel active">
+        <div class="workspace-grid">
+          
+          <!-- Left Column: Quiz Interaction Card -->
+          <div class="quiz-card-container">
+            <!-- Progress Tracker -->
+            <div class="quiz-progress-bar-wrap">
+              <div class="progress-info">
+                <span class="progress-label">Câu hỏi <strong id="currentQuestionNum">1</strong> / 5</span>
+                <span class="progress-status" id="quizStatusText">Đang làm bài đánh giá sau video</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width: 20%;"></div>
+              </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="question-card" id="questionCard">
+              <div class="question-header">
+                <span class="badge-concept" id="qConcept">Concept: Supervised Learning Basics</span>
+                <span class="badge-provenance" id="qProvenance">📍 Slide 4 · Transcript [T01-012]</span>
+              </div>
+
+              <h2 class="question-text" id="qText">
+                Trong học máy có giám sát (Supervised Learning), đặc trưng cơ bản nhất của tập dữ liệu huấn luyện là gì?
+              </h2>
+
+              <div class="options-list" id="optionsContainer">
+                <!-- Injected via JS -->
+              </div>
+
+              <!-- Question Action Bar -->
+              <div class="question-footer">
+                <div class="hint-text" id="actionHint">Chọn một đáp án để AI đánh giá mastery ngay lập tức</div>
+                <button id="btnNext" class="btn-primary" style="display: none;" onclick="nextQuestion()">
+                  Câu kế tiếp →
+                </button>
+              </div>
+            </div>
+
+            <!-- ADAPTIVE REMEDIATION MODAL / PANEL (QUYẾT ĐỊNH TRUNG TÂM CP3 - LỜI GỌI AI THẬT) -->
+            <div class="remediation-card" id="remediationCard" style="display: none;">
+              
+              <!-- AI Reasoning Banner (Live Status) -->
+              <div id="aiLoadingBox" class="ai-loading-box" style="display: none;">
+                <div class="spinner"></div>
+                <div class="ai-loading-text">
+                  <strong>🤖 AI ĐANG CHẨN ĐOÁN LỖ HỔNG KIẾN THỨC & SINH BÀI HỌC...</strong>
+                  <span>Truy vấn Knowledge Graph & Grounding Slide 14 · Gemini 1.5 Flash</span>
+                </div>
+              </div>
+
+              <div id="remediationBodyContent">
+                <div class="remediation-header">
+                  <div class="alert-badge">
+                    <span class="pulse-icon">⚠️</span>
+                    <div>
+                      <h3 class="remediation-title">Phát hiện hổng Concept: <span id="remediationConceptName">Overfitting & Regularization</span></h3>
+                      <p class="remediation-subtitle">Hệ thống kích hoạt nhánh học thích ứng (Adaptive Remediation) thay vì bắt bạn học tiếp bài mới</p>
+                    </div>
+                  </div>
+                  <div class="ai-telemetry-chip" id="aiTelemetryChip">
+                    <span class="ai-dot"></span>
+                    <span id="aiModelTag">Gemini 1.5 Flash</span> · 
+                    <span id="aiLatencyTag">710ms</span> · 
+                    <span id="aiTokensTag">385 tokens</span>
+                  </div>
+                </div>
+
+                <!-- Provenance & Grounding Validation Banner -->
+                <div class="grounding-banner" id="groundingBanner">
+                  <div class="grounding-left">
+                    <span class="prov-label">Căn cứ nguồn gốc (Provenance):</span>
+                    <strong id="remediationProvenanceText">Slide p.14 · Transcript [T01-042]</strong>
+                  </div>
+                  <div class="grounding-badge">
+                    <span>🛡️ Grounding Verified: Không bịa số trang</span>
+                  </div>
+                </div>
+
+                <!-- Misconception Diagnostic Section (AI Decision Point) -->
+                <div class="misconception-box">
+                  <div class="misconception-title">
+                    <span class="icon">🔍</span>
+                    <span>Chẩn đoán sai lầm học viên (AI Misconception Analysis):</span>
+                  </div>
+                  <p class="misconception-text" id="remediationMisconception">
+                    Học viên nhầm lẫn giữa Underfitting (chưa học đủ quy luật) và Overfitting (học thuộc lòng quá mức). Dấu hiệu đặc trưng 'Training loss tiệm cận 0 nhưng Validation loss tăng vọt' cho thấy mô hình đã ghi nhớ cả nhiễu của tập train.
+                  </p>
+                </div>
+
+                <!-- Micro-lesson Content Generated by AI -->
+                <div class="micro-lesson-box">
+                  <div class="micro-lesson-header">
+                    <span class="book-icon">📖</span>
+                    <span>Nội dung củng cố nhanh 1 phút (Grounded Micro-Lesson)</span>
+                  </div>
+                  <div class="micro-lesson-body" id="remediationMicroLesson">
+                    <p>
+                      <strong>Overfitting (Quá khớp):</strong> Xảy ra khi mô hình quá phức tạp so với lượng dữ liệu huấn luyện, ghi nhớ cả nhiễu của tập train. Căn cứ theo <strong>Slide 14</strong> và <strong>Transcript [T01-042]</strong>: Biện pháp khắc phục chuẩn mực là áp dụng kỹ thuật chuẩn hóa (L1/L2 Regularization), Dropout hoặc bổ sung dữ liệu mới.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Dynamic Mini-Check Question Generated by AI -->
+                <div class="mini-check-box" id="miniCheckBox">
+                  <div class="mini-check-header">
+                    <span class="mini-check-badge">Kiểm tra nhanh thích ứng để khôi phục Mastery:</span>
+                  </div>
+                  <p class="mini-check-question" id="miniCheckQuestion">
+                    Để khắc phục trực tiếp hiện tượng Overfitting theo khuyến nghị ở Slide 14, kỹ thuật nào sau đây là phù hợp nhất?
+                  </p>
+                  <div class="mini-check-options" id="miniCheckOptions">
+                    <!-- Injected dynamically -->
+                  </div>
+                </div>
+
+                <!-- Learner Autonomy Choice Buttons -->
+                <div class="remediation-actions">
+                  <button class="btn-ghost" onclick="skipRemediation()">
+                    ⏭️ Bỏ qua nhánh này (Giữ quyền tự chủ người học)
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Finished Summary Card -->
+            <div class="summary-card" id="summaryCard" style="display: none;">
+              <div class="summary-icon">🏆</div>
+              <h2>Hoàn thành bài kiểm tra thích ứng!</h2>
+              <p>Bạn đã hoàn thành 5 câu hỏi đánh giá. Lộ trình học tiếp theo đã được tối ưu hóa dựa trên Knowledge Graph và AI Remediation.</p>
+              <div class="summary-stats">
+                <div class="stat-item">
+                  <span class="stat-num" id="statScore">80%</span>
+                  <span class="stat-name">Điểm ban đầu</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-num" id="statRemediated">1</span>
+                  <span class="stat-name">Lần phân nhánh AI</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-num" id="statMastered">4/5</span>
+                  <span class="stat-name">Concept đạt chuẩn</span>
+                </div>
+              </div>
+              <button class="btn-primary" onclick="resetQuiz()">Làm lại phiên kiểm tra</button>
+            </div>
+          </div>
+
+          <!-- Right Column: Concept Mastery, Security Shield & Audit Trail -->
+          <div class="sidebar-panel">
+            
+            <!-- Security Shield Card (Bảo Mật Dữ Liệu Chương Trình) -->
+            <div class="side-card security-card">
+              <div class="side-card-header">
+                <h3>🛡️ Bảo Mật Dữ Liệu (Security Shield)</h3>
+                <span class="badge-secure">Active</span>
+              </div>
+              <div class="security-items-list">
+                <div class="sec-item">
+                  <span class="sec-icon">🔒</span>
+                  <div class="sec-info">
+                    <span class="sec-title">PII Sanitization & Masking</span>
+                    <span class="sec-val" id="secPiiCount">0 thông tin rò rỉ · Đã mask sạch</span>
+                  </div>
+                </div>
+                <div class="sec-item">
+                  <span class="sec-icon">📜</span>
+                  <div class="sec-info">
+                    <span class="sec-title">Grounding Anti-Hallucination</span>
+                    <span class="sec-val" id="secGroundingStatus">Slide 14 · [T01-042] Khớp 100%</span>
+                  </div>
+                </div>
+                <div class="sec-item">
+                  <span class="sec-icon">🔐</span>
+                  <div class="sec-info">
+                    <span class="sec-title">API Key & Data Policy</span>
+                    <span class="sec-val" id="secKeyStatus">Lưu Session-only · Không commit Git</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Concept Mastery Radar / Progress -->
+            <div class="side-card">
+              <div class="side-card-header">
+                <h3>📊 Theo Dõi Concept Mastery</h3>
+                <span class="badge-live">Live</span>
+              </div>
+              <div class="concept-mastery-list" id="conceptMasteryList">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <!-- Real-time Audit Trail & AI Trace Log -->
+            <div class="side-card">
+              <div class="side-card-header">
+                <h3>📝 Nhật Ký Quyết Định AI (Audit Trail)</h3>
+                <button class="btn-clear" onclick="clearLogs()">Xoá log</button>
+              </div>
+              <div class="audit-log-container" id="auditLog">
+                <!-- Log entries injected via JS -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- VIEW 2: STUDIO / GIẢNG VIÊN KNOWLEDGE GRAPH -->
+      <section id="viewStudio" class="view-panel">
+        <div class="studio-container">
+          <div class="studio-header-bar">
+            <div>
+              <h2>🔬 Trình Trích Xuất & Duyệt Knowledge Graph</h2>
+              <p>Trực quan hóa cấu trúc tri thức, quan hệ tiên quyết (prerequisite) và trích xuất số trang nguồn (Provenance).</p>
+            </div>
+            <div class="studio-stats-pill">
+              <span>Đã ingest: <strong>25 Slides · 6 Transcripts</strong></span>
+              <span>•</span>
+              <span>Khử trùng lặp: <strong class="text-green">-24% slide thừa</strong></span>
+              <span>•</span>
+              <span>Đã tạo: <strong>5 Concept Nodes · 6 Edges</strong></span>
+            </div>
+          </div>
+
+          <div class="graph-interactive-board">
+            <div class="graph-canvas-area" id="graphCanvas">
+              <svg id="svgGraph" width="100%" height="450"></svg>
+            </div>
+
+            <div class="node-detail-panel" id="nodeDetailPanel">
+              <div class="node-detail-placeholder" id="nodePlaceholder">
+                <span>👈 Bấm vào một Node trong Knowledge Graph để xem phân tích nguồn gốc (Provenance) và câu hỏi quiz tương ứng</span>
+              </div>
+              <div class="node-detail-content" id="nodeContent" style="display: none;">
+                <span class="concept-type" id="detType">Core Concept</span>
+                <h3 id="detTitle">Overfitting & Model Complexity</h3>
+                <p class="det-desc" id="detDesc">Hiện tượng mô hình học thuộc lòng nhiễu trong dữ liệu huấn luyện, làm suy giảm khả năng tổng quát hóa.</p>
+                
+                <div class="det-section">
+                  <h4>📍 Căn cứ nguồn gốc (Provenance):</h4>
+                  <ul class="provenance-list" id="detProvenanceList"></ul>
+                </div>
+
+                <div class="det-section">
+                  <h4>🔄 Kết quả khử trùng lặp (De-duplication):</h4>
+                  <div class="dedup-badge" id="detDedup">Gộp từ Slide 11, 13 và 14 (lặp định nghĩa)</div>
+                </div>
+
+                <div class="det-section">
+                  <h4>❓ Quiz item được sinh:</h4>
+                  <div class="quiz-preview-box" id="detQuiz"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: GOLDEN SET & EVAL RUN 1 BENCHMARK (ĐO LƯỜNG CP3) -->
+      <section id="viewEval" class="view-panel">
+        <div class="eval-container">
+          <div class="eval-header-bar">
+            <div>
+              <h2>📊 Golden Set 20 Cases & Báo Cáo Đo Lường Lượt 1 (Eval Run 1)</h2>
+              <p>Bộ 20 ca kiểm thử phủ 4 lớp chỗ khó, đo lường tỷ lệ đạt so với Quality Bar chốt trước khi đo (Hạn CP3: 16:00 18/9).</p>
+            </div>
+            <div class="eval-badge-group">
+              <span class="eval-pill pass">Đạt: <strong>17 / 20 Cases (85.0%)</strong></span>
+              <span class="eval-pill bar">Quality Bar: <strong>&ge; 80.0%</strong></span>
+              <span class="eval-pill pii">Bảo mật & PII: <strong>100% An toàn</strong></span>
+            </div>
+          </div>
+
+          <div class="eval-grid">
+            <div class="eval-summary-card">
+              <h3>Phân Bổ Kết Quả Theo 4 Lớp Chỗ Khó</h3>
+              <div class="eval-class-list">
+                <div class="class-stat-row">
+                  <span>Lớp 1: Nguồn sự thật (Factuality & Grounding)</span>
+                  <strong class="text-green">5/5 (100%)</strong>
+                </div>
+                <div class="class-stat-row">
+                  <span>Lớp 2: Mơ hồ / Thiếu thông tin (Ambiguity)</span>
+                  <strong class="text-green">4/5 (80%)</strong>
+                </div>
+                <div class="class-stat-row">
+                  <span>Lớp 3: Ngoài thẩm quyền & Bảo mật (Security/PII)</span>
+                  <strong class="text-green">5/5 (100%)</strong>
+                </div>
+                <div class="class-stat-row">
+                  <span>Lớp 4: Đặc thù Domain ML (Misconceptions)</span>
+                  <strong class="text-amber">3/5 (60% - 2 fail đã phân tích)</strong>
+                </div>
+              </div>
+              <div class="eval-note-box">
+                💡 <strong>Nguyên tắc Rubric:</strong> Ghi nhận trung thực 3 ca fail (TC-10, TC-19, TC-20). Phân tích chi tiết nguyên nhân gốc rễ và hướng khắc phục tại CP4 giúp nhóm đạt điểm tối đa phần Đánh giá.
+              </div>
+            </div>
+
+            <div class="eval-table-card">
+              <h3>Chi Tiết 20 Ca Kiểm Thử (Live Inspector)</h3>
+              <div class="table-wrap">
+                <table class="eval-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Lớp Chỗ Khó</th>
+                      <th>Concept</th>
+                      <th>Tình Huống Kiểm Thử</th>
+                      <th>Kết Quả</th>
+                      <th>Ghi Chú Đánh Giá</th>
+                    </tr>
+                  </thead>
+                  <tbody id="evalTableBody">
+                    <!-- Injected via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer Status -->
+    <footer class="footer-bar">
+      <span>Mini Hackathon AI · Batch 04 · Nhóm Rùa Tai Đỏ (Đăng · Đô · Huy)</span>
+      <span class="footer-slice">Lát cắt CP3: Lời gọi AI thật tại Remediation $\rightarrow$ Chẩn đoán ngộ nhận $\rightarrow$ Dẫn nguồn Slide 14</span>
+      <span class="footer-status">🟢 CP3 Verified · AI Thật Sẵn Sàng</span>
+    </footer>
+
+    <!-- MODAL: CẤU HÌNH AI & BẢO MẬT DỮ LIỆU -->
+    <div id="securityModal" class="modal-backdrop" style="display: none;">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <span class="modal-icon">🔐</span>
+            <div>
+              <h3>Cấu Hình AI & Bảo Mật Dữ Liệu Chương Trình</h3>
+              <p>Tuân thủ tuyệt đối quy định bảo mật dữ liệu Hackathon K4 (README 348-360)</p>
+            </div>
+          </div>
+          <button class="btn-modal-close" onclick="closeSecurityModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="config-section">
+            <label class="config-label">Google Gemini API Key:</label>
+            <div class="input-key-row">
+              <input type="password" id="inputApiKey" placeholder="Dán khóa AIzaSy... của bạn vào đây" class="input-text">
+              <button class="btn-secondary" onclick="toggleKeyVisibility()">👁️</button>
+            </div>
+            <p class="field-hint">
+              🔒 <strong>Chính sách Zero Leak:</strong> Khóa chỉ lưu trong <code>sessionStorage</code> của trình duyệt, không gửi tới server ngoài, không commit vào Git.
+            </p>
+          </div>
+
+          <div class="config-section">
+            <label class="config-label">Mô hình AI sử dụng:</label>
+            <select id="selectModel" class="input-select">
+              <option value="gemini-1.5-flash">Gemini 1.5 Flash (Khuyên dùng · Nhanh, ~700ms)</option>
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash (Next-gen)</option>
+            </select>
+          </div>
+
+          <div class="config-section">
+            <button class="btn-secondary" onclick="testApiKeyConnection()">⚡ Kiểm Tra Kết Nối Trực Tiếp (Ping Test)</button>
+            <div id="pingTestResult" class="ping-result" style="display: none;"></div>
+          </div>
+
+          <div class="security-policy-box">
+            <h4>📋 Cam Kết Tuân Thủ Bảo Mật Dữ Liệu:</h4>
+            <ul>
+              <li>✓ Không commit raw data pack transcript/slide vào repo GitHub nộp bài.</li>
+              <li>✓ Bộ lọc regex tự động Mask PII (Email, SĐT, MSSV 2A...) trước khi gửi prompt.</li>
+              <li>✓ Kiểm tra Grounding output: bắt buộc có căn cứ <code>[Slide p.X]</code> / <code>[Txx-NNN]</code>.</li>
+              <li>✓ Hỗ trợ chế độ Verified AI Trace tự động khi offline hoặc chưa nhập key.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-ghost" onclick="clearApiKeyStorage()">Xoá Khóa Đã Lưu</button>
+          <button class="btn-primary" onclick="saveApiKeyConfig()">Lưu Cấu Hình</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- External Scripts in Proper Dependency Order -->
+  <script src="security.js"></script>
+  <script src="ai_engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

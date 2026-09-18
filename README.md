@@ -116,6 +116,23 @@ Hai phòng cùng ca dùng chung lịch mốc. Năm link form phát đủ từ đ
 
 **Số xấu vẫn được đủ điểm** — miễn là số thật. 13 trên 21 mà phân tích được vì sao 8 câu kia sai thì ăn điểm cao hơn "chạy tốt" không có gì chứng minh.
 
+#### 🚀 BÁO CÁO NỘP BÀI CHECKPOINT 3 (CP3) — NHÓM RÙA TAI ĐỎ
+
+1. **Lời gọi AI thật ở Quyết định Trung tâm:**
+   - Đã tích hợp mô-đun AI (`prototype/ai_engine.js`) gọi trực tiếp **Google Gemini 1.5 Flash** tại nhánh Phân nhánh Học thích ứng (Adaptive Remediation).
+   - AI chẩn đoán ngộ nhận (Misconception Diagnosis), sinh bài học bổ trợ 1 phút có dẫn nguồn `[Slide p.14][T01-042]` và sinh câu hỏi củng cố thời gian thực. Có Telemetry đo Latency (~700ms) và Token usage.
+2. **Số đo đo lường Lượt 1 (Eval Run 1):**
+   - **Tập kiểm thử:** [eval/golden_set_20.json](file:///eval/golden_set_20.json) (20 cases phủ đủ 4 lớp chỗ khó).
+   - **Quality Bar chốt trước khi đo:** $\ge 80\%$ qua bộ, trích dẫn đúng nguồn $\ge 85\%$, vi phạm PII $= 0\%$.
+   - **Kết quả đo lường Lượt 1:** **17/20 Cases ĐẠT CHUẨN (85.0%)** $\rightarrow$ Vượt Quality Bar!
+   - **Báo cáo phân tích chi tiết:** [eval/eval_run1_report.md](file:///eval/eval_run1_report.md) (Ghi nhận trung thực và phân tích gốc rễ 3 ca fail TC-10, TC-19, TC-20 để tối ưu tại CP4).
+3. **Bảo mật Dữ liệu Chương trình & PII Protection:**
+   - Đã ban hành chính sách [SECURITY.md](file:///SECURITY.md) tuân thủ triệt để 6 điều khoản bảo mật dữ liệu của Hackathon.
+   - Quản lý API Key an toàn trong `sessionStorage` (không commit Git); bộ lọc PII Sanitization tự động mask email/SĐT/MSSV.
+4. **Hỗ trợ Quay Video 30 giây:**
+   - Đã có tài liệu kịch bản từng giây: [CP3_VIDEO_GUIDE.md](file:///CP3_VIDEO_GUIDE.md).
+   - Prototype tích hợp nút *"⚡ Quay Video CP3 (30s)"* có thanh đếm ngược và timeline hướng dẫn trực tiếp trên màn hình.
+
 ---
 
 ### CP4 · Chốt `spec.md`
