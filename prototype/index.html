@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rùa Tai Đỏ · Adaptive Knowledge-to-Lesson Prototype (CP3)</title>
+  <title>Rùa Tai Đỏ · Adaptive Knowledge-to-Lesson Prototype (CP3 / CP4)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -38,8 +38,8 @@
         <div class="logo-badge">
           <span class="logo-icon">🐢</span>
           <div class="brand-text">
-            <span class="brand-name">RÙA TAI ĐỎ <span class="tag-c1">TRACK C1 · CP3</span></span>
-            <span class="brand-sub">Adaptive Lesson Studio · Lời Gọi AI Thật & Bảo Mật Dữ Liệu</span>
+            <span class="brand-name">RÙA TAI ĐỎ <span class="tag-c1">TRACK C1 · CP4</span></span>
+            <span class="brand-sub">Adaptive Lesson Studio · Dữ Liệu Thật Day 2 & Bảo Mật PII</span>
           </div>
         </div>
       </div>
@@ -91,12 +91,12 @@
             <!-- Question Card -->
             <div class="question-card" id="questionCard">
               <div class="question-header">
-                <span class="badge-concept" id="qConcept">Concept: Supervised Learning Basics</span>
-                <span class="badge-provenance" id="qProvenance">📍 Slide 4 · Transcript [T01-012]</span>
+                <span class="badge-concept" id="qConcept">Concept: Problem Framing vs Solution Jumping</span>
+                <span class="badge-provenance" id="qProvenance">📍 Slide 8 · Transcript [T01-004][T01-030]</span>
               </div>
 
               <h2 class="question-text" id="qText">
-                Trong học máy có giám sát (Supervised Learning), đặc trưng cơ bản nhất của tập dữ liệu huấn luyện là gì?
+                Khi nhận một yêu cầu kinh doanh mơ hồ (như 'hãy xây dựng một AI Chatbot hỗ trợ khách hàng'), sai lầm phổ biến nhất của các cấp quản lý và đội ngũ phát triển là gì?
               </h2>
 
               <div class="options-list" id="optionsContainer">
@@ -129,7 +129,7 @@
                   <div class="alert-badge">
                     <span class="pulse-icon">⚠️</span>
                     <div>
-                      <h3 class="remediation-title">Phát hiện hổng Concept: <span id="remediationConceptName">Overfitting & Regularization</span></h3>
+                      <h3 class="remediation-title">Phát hiện hổng Concept: <span id="remediationConceptName">Dogfooding Strategy</span></h3>
                       <p class="remediation-subtitle">Hệ thống kích hoạt nhánh học thích ứng (Adaptive Remediation) thay vì bắt bạn học tiếp bài mới</p>
                     </div>
                   </div>
@@ -159,7 +159,7 @@
                     <span>Chẩn đoán sai lầm học viên (AI Misconception Analysis):</span>
                   </div>
                   <p class="misconception-text" id="remediationMisconception">
-                    Học viên nhầm lẫn giữa Underfitting (chưa học đủ quy luật) và Overfitting (học thuộc lòng quá mức). Dấu hiệu đặc trưng 'Training loss tiệm cận 0 nhưng Validation loss tăng vọt' cho thấy mô hình đã ghi nhớ cả nhiễu của tập train.
+                    Học viên hiểu nhầm 'Dogfooding' là thuê người dùng bên ngoài thử nghiệm trả tiền theo giờ, thay vì hiểu đúng bản chất là chính đội ngũ phát triển tự dùng sản phẩm của mình hàng ngày để cảm nhận nỗi đau và tối ưu liên tục.
                   </p>
                 </div>
 
@@ -171,7 +171,7 @@
                   </div>
                   <div class="micro-lesson-body" id="remediationMicroLesson">
                     <p>
-                      <strong>Overfitting (Quá khớp):</strong> Xảy ra khi mô hình quá phức tạp so với lượng dữ liệu huấn luyện, ghi nhớ cả nhiễu của tập train. Căn cứ theo <strong>Slide 14</strong> và <strong>Transcript [T01-042]</strong>: Biện pháp khắc phục chuẩn mực là áp dụng kỹ thuật chuẩn hóa (L1/L2 Regularization), Dropout hoặc bổ sung dữ liệu mới.
+                      <strong>Chiến lược Dogfooding:</strong> Tự mình dùng chính sản phẩm mình làm ra hàng ngày để thấu hiểu nỗi đau của user. Căn cứ theo <strong>Slide 14</strong> và <strong>Transcript [T01-042]</strong>: Bạn là tester đầu tiên, cảm nhận lỗi trực tiếp để fix ngay lập tức (tương tự như Jira, Slack, Anthropic xài Claude Code).
                     </p>
                   </div>
                 </div>
@@ -182,7 +182,7 @@
                     <span class="mini-check-badge">Kiểm tra nhanh thích ứng để khôi phục Mastery:</span>
                   </div>
                   <p class="mini-check-question" id="miniCheckQuestion">
-                    Để khắc phục trực tiếp hiện tượng Overfitting theo khuyến nghị ở Slide 14, kỹ thuật nào sau đây là phù hợp nhất?
+                    Theo bài giảng ở Slide 14 & [T01-042], lợi ích lớn nhất của việc Dogfooding là gì?
                   </p>
                   <div class="mini-check-options" id="miniCheckOptions">
                     <!-- Injected dynamically -->

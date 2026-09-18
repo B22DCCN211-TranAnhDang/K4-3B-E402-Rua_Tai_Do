@@ -8,70 +8,70 @@ const AIEngine = {
   activeModel: "gemini-1.5-flash",
   apiEndpoint: "https://generativelanguage.googleapis.com/v1beta/models/",
 
-  // Pre-compiled Fallback Traces (Dùng khi người dùng chưa nhập API Key hoặc mạng chập chờn)
+  // Pre-compiled Fallback Traces (Dùng khi chưa có API Key hoặc mạng chập chờn - Khớp 100% transcript-01-clean.md)
   FALLBACK_TRACES: {
-    overfitting: {
-      misconception: "Học viên nhầm lẫn giữa Underfitting (chưa học đủ) và Overfitting (học thuộc lòng quá mức). Dấu hiệu đặc trưng 'Training loss tiệm cận 0 nhưng Validation loss tăng vọt' cho thấy mô hình đã ghi nhớ cả nhiễu của tập train.",
-      micro_lesson: "Hiện tượng Overfitting (Quá khớp) xảy ra khi mô hình quá phức tạp so với lượng dữ liệu huấn luyện. Căn cứ theo Slide 14 và Transcript [T01-042]: Khi mô hình ghi nhớ nhiễu, sai số trên tập train tiệm cận 0 nhưng mất hoàn toàn khả năng tổng quát hóa trên tập Validation. Biện pháp khắc phục tiêu chuẩn là áp dụng Regularization (L1/L2), Dropout hoặc thu thập thêm dữ liệu.",
+    dogfooding: {
+      misconception: "Học viên hiểu nhầm 'Dogfooding' là thuê người dùng bên ngoài thử nghiệm trả tiền theo giờ, thay vì hiểu đúng bản chất là chính đội ngũ phát triển tự dùng sản phẩm của mình hàng ngày.",
+      micro_lesson: "Chiến lược Dogfooding (tự dùng sản phẩm của chính mình) là phương pháp xây dựng sản phẩm kinh điển. Căn cứ theo Slide 14 và Transcript [T01-042]: Khi bạn là user và dùng chính sản phẩm bạn làm ra, bạn sẽ trực tiếp cảm nhận nỗi đau, là tester đầu tiên và có động lực tối ưu liên tục mà không cần chờ đợi user ngoài phản hồi (giống như Jira, Slack, hay Anthropic dùng Claude Code để build Claude Code).",
       provenance: "Slide p.14 · Transcript [T01-042]",
-      prerequisite_reason: "Hổng kiến thức tại Concept 'Overfitting & Model Complexity'. Đề xuất nhánh ôn tập trước khi chuyển sang 'Regularization'.",
+      prerequisite_reason: "Hổng kiến thức tại Concept 'Dogfooding Strategy'. Đề xuất nhánh ôn tập trước khi chuyển sang 'Double Diamond & Testing'.",
       mini_check: {
-        question: "Để khắc phục trực tiếp hiện tượng Overfitting theo khuyến nghị ở Slide 14, kỹ thuật nào sau đây là phù hợp nhất?",
+        question: "Theo bài giảng ở Slide 14 & [T01-042], lợi ích lớn nhất của việc Dogfooding là gì?",
         options: [
-          { text: "A. Thêm số lớp và tham số vào mô hình để tăng sức chứa", isCorrect: false },
-          { text: "B. Áp dụng kỹ thuật Regularization (như L2 Weight Decay) để phạt trọng số lớn", isCorrect: true }
+          { text: "A. Bạn tự là user, tự cảm nhận pain point và có động lực fix lỗi ngay lập tức", isCorrect: true },
+          { text: "B. Tiết kiệm 100% chi phí marketing và quảng cáo sản phẩm", isCorrect: false }
         ]
       }
     },
-    supervised: {
-      misconception: "Học viên chưa phân biệt rõ giữa Supervised Learning (có nhãn Ground Truth) và Unsupervised Learning (chỉ có đặc trưng X).",
-      micro_lesson: "Học máy có giám sát (Supervised Learning) bắt buộc mọi mẫu dữ liệu X phải đi kèm nhãn mục tiêu y (Ground Truth). Căn cứ theo Slide 4 và Transcript [T01-012]: Mô hình học ánh xạ f(X) -> y thông qua việc tối thiểu hóa sai khác giữa dự đoán và nhãn thực tế.",
-      provenance: "Slide p.4 · Transcript [T01-012]",
-      prerequisite_reason: "Cần nắm vững định nghĩa cặp (X, y) trước khi học về Hàm mất mát (Loss Function).",
+    problem_framing: {
+      misconception: "Học viên mắc bẫy 'Nhảy thẳng vào giải pháp' (Solution Jumping) mà chưa xác định rõ vấn đề thực sự phía sau yêu cầu mơ hồ của lãnh đạo/khách hàng.",
+      micro_lesson: "Theo Slide 8 và Transcript [T01-004][T01-030]: Công nghệ AI sinh ra là để giải quyết một vấn đề cụ thể. Đừng vội vàng lao vào xây AI Chatbot chỉ vì sếp yêu cầu, mà hãy dùng kỹ thuật Five Whys để đào sâu xem vấn đề thực sự ở đâu (ví dụ: nhân viên sale đang quá tải khâu nào) và đánh giá xem có thực sự cần đến AI hay chỉ cần cải tiến quy trình.",
+      provenance: "Slide p.8 · Transcript [T01-004][T01-030]",
+      prerequisite_reason: "Cần nắm vững cách xác định bài toán (Problem Framing) trước khi lựa chọn công nghệ và kiến trúc AI.",
       mini_check: {
-        question: "Trong bài toán phân loại email spam có giám sát, nhãn y đại diện cho điều gì?",
+        question: "Khi sếp yêu cầu 'Hãy làm một AI Chatbot hỗ trợ khách hàng', bước đầu tiên đúng đắn nhất là gì?",
         options: [
-          { text: "A. Nhãn xác định email đó là 'Spam' hay 'Không phải Spam'", isCorrect: true },
-          { text: "B. Tần suất xuất hiện của các từ trong email", isCorrect: false }
+          { text: "A. Đặt câu hỏi phản biện Five Whys để tìm ra điểm đau thực sự phía sau yêu cầu", isCorrect: true },
+          { text: "B. Chọn ngay mô hình ngôn ngữ lớn mạnh nhất để code prototype", isCorrect: false }
         ]
       }
     },
-    optimization: {
-      misconception: "Học viên nhầm lẫn giữa hàm mất mát bài toán phân loại (Cross-Entropy) và bài toán hồi quy (MSE).",
-      micro_lesson: "Theo Slide 8 và Transcript [T01-028]: Mean Squared Error (MSE) đo trung bình bình phương khoảng cách giữa giá trị thực và dự đoán, là hàm tối ưu chuẩn tắc cho bài toán Hồi quy tuyến tính.",
-      provenance: "Slide p.8 · Transcript [T01-028]",
-      prerequisite_reason: "Hiểu đúng Loss function là điều kiện tiên quyết để hiểu cách đánh giá mô hình.",
+    double_diamond: {
+      misconception: "Học viên nhận định sai lầm rằng 'Làm sai cái đúng' nguy hiểm hơn 'Làm đúng cái sai'.",
+      micro_lesson: "Căn cứ theo Slide 17 và Transcript [T01-049][T01-060]: 'Làm đúng cái sai (Do the wrong thing right)' nguy hiểm hơn rất nhiều vì bẫy chi phí chìm (Sunk Cost). Khi bạn giải quyết xuất sắc một bài toán sai ngay từ đầu, bạn rơi vào ảo tưởng thành công và tâm lý tiếc công sức khiến rất khó dừng lại để đặt lại câu hỏi cho vấn đề ban đầu.",
+      provenance: "Slide p.17 · Transcript [T01-049][T01-060]",
+      prerequisite_reason: "Hiểu rõ bẫy chi phí chìm trong Double Diamond để biết khi nào cần dừng lại và kiểm chứng lại bài toán.",
       mini_check: {
-        question: "MSE phạt các sai số lớn như thế nào so với MAE (Mean Absolute Error)?",
+        question: "Tại sao 'Làm đúng cái sai' lại nguy hiểm hơn 'Làm sai cái đúng' trong mô hình Kim cương đôi?",
         options: [
-          { text: "A. Phạt nặng hơn rất nhiều do bình phương khoảng cách sai số", isCorrect: true },
-          { text: "B. Phạt nhẹ hơn vì lấy giá trị trung bình", isCorrect: false }
+          { text: "A. Vì chi phí chìm (Sunk Cost) khiến ta khó từ bỏ một hướng đi đã sai từ gốc", isCorrect: true },
+          { text: "B. Vì làm sai thì bị phạt tiền nhiều hơn", isCorrect: false }
         ]
       }
     },
-    regularization: {
-      misconception: "Học viên chưa phân biệt được tính năng tạo độ thưa (sparsity) của L1 Lasso so với co rút trọng số (shrinkage) của L2 Ridge.",
-      micro_lesson: "Theo Slide 17 và Transcript [T01-055]: L1 Regularization sử dụng chuẩn giá trị tuyệt đối |w|, có khả năng triệt tiêu trọng số về 0 giúp chọn lọc đặc trưng. Trong khi L2 Ridge chỉ co hẹp độ lớn trọng số.",
-      provenance: "Slide p.17 · Transcript [T01-055]",
-      prerequisite_reason: "Cần phân biệt L1 và L2 để lựa chọn đúng phương pháp điều chuẩn khi mô hình bị Overfitting.",
+    first_principles: {
+      misconception: "Học viên nhầm tưởng First Principles Thinking là dựa vào kinh nghiệm cũ hoặc sao chép quy trình của các đối thủ đi trước.",
+      micro_lesson: "Theo Slide 20 và Transcript [T01-062]: First Principles Thinking (Tư duy từ nguyên bản) là phương pháp bóc tách vấn đề về những nguyên lý nền tảng nhất không thể chia nhỏ hơn để tự tìm lời giải sáng tạo, thay vì đi sao chép cách làm cũ (như bài học Elon Musk phân tích chi phí tên lửa SpaceX).",
+      provenance: "Slide p.20 · Transcript [T01-062]",
+      prerequisite_reason: "Tư duy nguyên bản giúp kiến tạo các giải pháp AI đột phá mà không bị bó hẹp trong lối mòn cũ.",
       mini_check: {
-        question: "Khi nào nên ưu tiên chọn L1 Regularization hơn L2?",
+        question: "Cốt lõi của tư duy First Principles Thinking là gì?",
         options: [
-          { text: "A. Khi muốn tự động loại bỏ bớt các đặc trưng không quan trọng (Feature Selection)", isCorrect: true },
-          { text: "B. Khi tất cả các đặc trưng đều có mức độ quan trọng ngang nhau", isCorrect: false }
+          { text: "A. Chẻ nhỏ bài toán về những chân lý nền tảng nhất không thể chia nhỏ hơn", isCorrect: true },
+          { text: "B. Áp dụng ngay giải pháp mà các công ty Big Tech đã công bố", isCorrect: false }
         ]
       }
     },
-    validation: {
-      misconception: "Học viên ngộ nhận rằng K-Fold Cross Validation có thể thay thế hoàn toàn tập Test độc lập cuối cùng.",
-      micro_lesson: "Theo Slide 22 và Transcript [T01-070]: K-Fold Cross Validation chia dữ liệu thành K phần để đánh giá độ ổn định của siêu tham số, nhưng vẫn cần một tập Test riêng biệt chưa từng thấy để kiểm thử độ tổng quát hóa cuối cùng.",
-      provenance: "Slide p.22 · Transcript [T01-070]",
-      prerequisite_reason: "Validation là bước kiểm định chéo cuối cùng trong chuỗi Knowledge Graph.",
+    impact_effort: {
+      misconception: "Học viên cho rằng nên ưu tiên các bài toán công nghệ phức tạp, nỗ lực cao (High Effort) để thể hiện năng lực team.",
+      micro_lesson: "Căn cứ Slide 24 và Transcript [T01-074][T01-078]: Khi đặt các bài toán lên Ma trận Tác động - Nỗ lực (Impact-Effort Matrix), nhóm Tác động cao - Nỗ lực thấp (High Impact - Low Effort) luôn phải được ưu tiên hàng đầu vì mang lại Quick Wins sớm, chứng minh giá trị kinh doanh với chi phí tối thiểu.",
+      provenance: "Slide p.24 · Transcript [T01-074][T01-078]",
+      prerequisite_reason: "Impact-Effort Matrix là bộ lọc hội tụ cuối cùng để chọn bài toán đáng làm trước khi phân bổ nguồn lực.",
       mini_check: {
-        question: "Mục đích chính của K-Fold Cross Validation là gì?",
+        question: "Trong Ma trận Tác động - Nỗ lực, nhóm bài toán nào mang lại 'Quick Wins' nên làm ngay?",
         options: [
-          { text: "A. Đánh giá độ ổn định và giảm thiểu phương sai do cách chia tập train/val ngẫu nhiên", isCorrect: true },
-          { text: "B. Tăng tốc độ huấn luyện mô hình lên gấp K lần", isCorrect: false }
+          { text: "A. Tác động cao - Nỗ lực thấp (High Impact, Low Effort)", isCorrect: true },
+          { text: "B. Tác động thấp - Nỗ lực cao (Low Impact, High Effort)", isCorrect: false }
         ]
       }
     }
@@ -127,7 +127,7 @@ const AIEngine = {
     // Giữ đúng độ trễ thật (~600ms - 900ms) để thể hiện chu kỳ AI xử lý
     await new Promise(r => setTimeout(r, 650));
     const latencyMs = Math.round(performance.now() - startTime);
-    const trace = this.FALLBACK_TRACES[question.conceptKey] || this.FALLBACK_TRACES.overfitting;
+    const trace = this.FALLBACK_TRACES[question.conceptKey] || this.FALLBACK_TRACES.dogfooding;
 
     const groundingCheck = SecurityGuard.verifyGrounding(trace, question.provenance);
 
@@ -150,11 +150,11 @@ const AIEngine = {
     const url = `${this.apiEndpoint}${this.activeModel}:generateContent?key=${apiKey}`;
 
     const systemPrompt = `Bạn là AI Engine sư phạm cho nền tảng VLearn Lesson Studio (Track C1).
-Nhiệm vụ: Khi học viên làm SAI một câu hỏi trắc nghiệm, bạn phải chẩn đoán lỗ hổng kiến thức (misconception), sinh bài học bổ trợ 1 phút (micro_lesson) CÓ DẪN NGUỒN CHÍNH XÁC từ slide/transcript đã cho, và tạo 1 câu hỏi củng cố nhanh (mini_check) 2 lựa chọn A/B.
+Nhiệm vụ: Khi học viên làm SAI một câu hỏi trắc nghiệm thuộc bài giảng 'Xác định bài toán AI cho doanh nghiệp' (Day 2), bạn phải chẩn đoán lỗ hổng kiến thức (misconception), sinh bài học bổ trợ 1 phút (micro_lesson) CÓ DẪN NGUỒN CHÍNH XÁC từ Slide và Transcript [T01-NNN] của bài giảng Day 2, và tạo 1 câu hỏi củng cố nhanh (mini_check) 2 lựa chọn A/B.
 BẮT BUỘC trả về định dạng JSON thuần túy (không kèm markdown \`\`\`json) theo đúng schema:
 {
   "misconception": "string phân tích vì sao học viên chọn đáp án sai đó",
-  "micro_lesson": "string bài học ngắn 1 phút, trích dẫn rõ [Slide p.X] và [Txx-NNN]",
+  "micro_lesson": "string bài học ngắn 1 phút, trích dẫn rõ [Slide p.X] và [T01-NNN]",
   "provenance": "string mã nguồn trích dẫn",
   "prerequisite_reason": "string giải thích vì sao chọn nhánh này trên Knowledge Graph",
   "mini_check": {
